@@ -1,97 +1,137 @@
-:root {
-    --primary: #00ff88;
-    --bg-dark: #050505;
-    --card-glass: rgba(255, 255, 255, 0.03);
-    --border: rgba(255, 255, 255, 0.1);
-    --text: #ffffff;
+const nexusDB = {
+    maquinas: [
+        { n: "Supino Vertical", f: "Peito", d: "Ajuste o banco, empurre as alças e controle o retorno. Foco no peitoral médio." },
+        { n: "Leg Press 45", f: "Pernas", d: "Apoie os pés na largura dos ombros. Não trave o joelho no topo." },
+        { n: "Puxada Alta", f: "Costas", d: "Puxe a barra em direção ao peito, fechando as escápulas." },
+        { n: "Smith Machine", f: "Multifuncional", d: "Ideal para agachamentos guiados e supinos com segurança." },
+        { n: "Cadeira Extensora", f: "Quadríceps", d: "Estenda as pernas totalmente e contraia a coxa no topo." }
+    ],
+    treinos: {
+        academia_massa: ["Peito e Tríceps", "Costas e Bíceps", "Pernas (Foco Quad)", "Ombros e Trapézio", "Braços", "Pernas (Foco Post)", "Descanso"],
+        academia_emagrecer: ["Full Body HIIT", "Cardio + Superiores", "Pernas (Circuito)", "Core e Corrida", "Full Body 2", "Cardio Intenso", "Descanso"],
+        casa_massa: ["Flexão e Tríceps Banco", "Agachamento e Afundo", "Prancha e Abdominais", "Flexão Diamante", "Saltos e Isometria", "Core e Pernas", "Descanso"]
+    },
+    dietas: {
+        massa: [
+            { h: "08:00", d: "4 Ovos + 100g Aveia + Fruta" },
+            { h: "12:00", d: "200g Frango + 250g Arroz + Feijão" },
+            { h: "16:00", d: "Whey + 30g Amendoim" },
+            { h: "20:00", d: "200g Carne + 200g Macarrão" }
+        ],
+        emagrecer: [
+            { h: "08:00", d: "2 Claras + Café Puro + 1 Maçã" },
+            { h: "12:00", d: "150g Peixe + Muita Salada + 100g Arroz" },
+            { h: "16:00", d: "Iogurte Natural + Castanhas" },
+            { h: "19:00", d: "Sopa de Legumes com Frango" }
+        ]
+    }
+};
+
+let user = { 
+    xp: 0, lvl: 1, water: 0,
+    metas: [
+        { t: "Beber 3.5L de Água", ok: false },
+        { t: "Completar Treino do Dia", ok: false },
+        { t: "Dormir 8 Horas", ok: false }
+    ]
+};
+
+function startApp() {
+    const name = document.getElementById('user-name').value;
+    if(!name) return alert("Por favor, digite seu nome!");
+
+    document.getElementById('auth-screen').classList.add('hidden');
+    document.getElementById('app-container').classList.remove('hidden');
+    document.getElementById('display-name').innerText = name;
+
+    renderMetas();
+    renderWorkouts();
+    renderDiet();
+    renderMachines();
+    updateProgress();
 }
 
-* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-body { background: var(--bg-dark); color: var(--text); overflow: hidden; }
-.hidden { display: none !important; }
-
-/* TELA INICIAL ORGANIZADA */
-.auth-wrapper {
-    height: 100vh; width: 100%;
-    background: radial-gradient(circle at top right, #1a1a2e, #000);
-    display: flex; justify-content: center; align-items: center;
+function updateProgress() {
+    document.getElementById('xp-fill').style.width = (user.xp / 500 * 100) + "%";
+    document.getElementById('xp-val').innerText = user.xp;
+    document.getElementById('lvl-num').innerText = user.lvl;
 }
 
-.auth-container {
-    background: rgba(15, 15, 20, 0.8);
-    backdrop-filter: blur(20px);
-    padding: 50px; border-radius: 30px;
-    width: 450px; border: 1px solid var(--border);
-    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+function calculateIMC() {
+    const h = document.getElementById('imc-h').value / 100;
+    const w = document.getElementById('imc-w').value;
+    if(h > 0 && w > 0) {
+        const imc = (w / (h * h)).toFixed(1);
+        const res = document.getElementById('imc-res');
+        res.classList.remove('hidden');
+        document.getElementById('imc-val-text').innerText = imc;
+        document.getElementById('imc-status-text').innerText = imc < 25 ? "Peso Saudável" : "Sobrepeso";
+        addXP(50);
+    }
 }
 
-.auth-header { text-align: center; margin-bottom: 30px; }
-.logo { font-size: 2rem; font-weight: 800; }
-.logo span { color: var(--primary); }
-.auth-header p { color: #888; font-size: 0.9rem; margin-top: 5px; }
-
-.input-section, .select-box { margin-bottom: 20px; }
-.input-section label, .select-box label { display: block; font-size: 0.8rem; color: var(--primary); margin-bottom: 8px; font-weight: 600; }
-
-input, select {
-    width: 100%; padding: 14px; background: rgba(255,255,255,0.05);
-    border: 1px solid var(--border); border-radius: 12px; color: white; outline: none; transition: 0.3s;
-}
-input:focus, select:focus { border-color: var(--primary); background: rgba(255,255,255,0.1); }
-
-.selection-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-
-.btn-start {
-    width: 100%; padding: 18px; margin-top: 20px;
-    background: var(--primary); color: #000; border: none;
-    border-radius: 15px; font-weight: 800; cursor: pointer; transition: 0.3s;
-}
-.btn-start:hover { transform: scale(1.02); box-shadow: 0 0 20px rgba(0, 255, 136, 0.4); }
-
-/* DASHBOARD LAYOUT */
-#app-container { display: flex; height: 100vh; }
-.sidebar {
-    width: 280px; background: #000; border-right: 1px solid var(--border);
-    padding: 30px; display: flex; flex-direction: column; justify-content: space-between;
+function addWater(ml) {
+    user.water += ml;
+    document.getElementById('water-text').innerText = `${(user.water/1000).toFixed(1)} / 3.5L`;
+    if(user.water >= 3500) addXP(20);
 }
 
-.nav-item {
-    width: 100%; padding: 15px; background: transparent; border: none;
-    color: #888; text-align: left; cursor: pointer; display: flex; align-items: center;
-    gap: 15px; font-size: 1rem; border-radius: 12px; transition: 0.3s; margin-bottom: 10px;
-}
-.nav-item.active, .nav-item:hover { background: var(--card-glass); color: var(--primary); }
-
-.main-viewport { flex: 1; overflow-y: auto; padding: 40px; background: #08080a; }
-
-/* CARDS DASHBOARD */
-.glass-card { background: var(--card-glass); border: 1px solid var(--border); border-radius: 24px; padding: 30px; margin-bottom: 30px; }
-.text-gradient { background: linear-gradient(to right, #00ff88, #00d4ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-
-.stats-row { display: grid; grid-template-columns: 1.5fr 1fr; gap: 30px; }
-.form-row { display: flex; gap: 15px; margin-bottom: 15px; }
-
-.imc-display { text-align: center; }
-.imc-circle {
-    width: 120px; height: 120px; border: 5px solid var(--primary);
-    border-radius: 50%; margin: 15px auto; display: flex; align-items: center; justify-content: center;
-    font-size: 2rem; font-weight: 800;
+function addXP(val) {
+    user.xp += val;
+    if(user.xp >= 500) { user.lvl++; user.xp = 0; alert("Level Up!"); }
+    updateProgress();
 }
 
-/* TABELAS */
-.table-wrapper { margin-top: 20px; overflow-x: auto; }
-table { width: 100%; border-collapse: collapse; }
-th, td { padding: 15px; text-align: left; border-bottom: 1px solid var(--border); }
-th { color: var(--primary); font-size: 0.8rem; letter-spacing: 1px; }
-
-/* FILTROS E GUIA */
-.muscle-selector { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 30px; }
-.muscle-selector button {
-    background: #111; border: 1px solid var(--border); color: white;
-    padding: 10px 20px; border-radius: 30px; cursor: pointer; transition: 0.3s;
+function renderMetas() {
+    const list = document.getElementById('metas-list');
+    list.innerHTML = user.metas.map((m, i) => `
+        <div class="card-item" style="display:flex; justify-content:space-between; align-items:center;">
+            <span>${m.t}</span>
+            <button onclick="addXP(100)" class="btn-action" style="width:auto; padding:5px 15px;">CONCLUIR</button>
+        </div>
+    `).join('');
 }
-.muscle-selector button:hover { border-color: var(--primary); color: var(--primary); }
 
-.machine-cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+function renderWorkouts() {
+    const loc = document.getElementById('user-location').value;
+    const goal = document.getElementById('user-goal').value;
+    const treinos = nexusDB.treinos[`${loc}_${goal}`] || nexusDB.treinos.academia_massa;
+    const dias = ["SEG", "TER", "QUA", "QUI", "SEX", "SAB", "DOM"];
+    
+    document.getElementById('workout-grid').innerHTML = treinos.map((t, i) => `
+        <div class="card glass" style="text-align:center">
+            <small style="color:var(--primary)">${dias[i]}</small>
+            <h4 style="margin-top:10px">${t}</h4>
+        </div>
+    `).join('');
+}
 
-.btn-primary { background: var(--primary); color: #000; border: none; padding: 15px; border-radius: 12px; font-weight: 700; cursor: pointer; }
+function renderDiet() {
+    const goal = document.getElementById('user-goal').value;
+    const plano = nexusDB.dietas[goal];
+    document.getElementById('diet-list').innerHTML = plano.map(d => `
+        <div class="card-item" style="display:flex; gap:20px">
+            <b style="color:var(--primary)">${d.h}</b>
+            <span>${d.d}</span>
+        </div>
+    `).join('');
+}
+
+function renderMachines() {
+    document.getElementById('machine-list').innerHTML = nexusDB.maquinas.map(m => `
+        <div class="card glass">
+            <h4 style="color:var(--primary)">${m.n}</h4>
+            <small>Foco: ${m.f}</small>
+            <p style="font-size:0.8rem; margin-top:10px; color:#888">${m.d}</p>
+        </div>
+    `).join('');
+}
+
+function showSection(id) {
+    document.querySelectorAll('.page-section').forEach(s => s.classList.add('hidden'));
+    document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.remove('hidden');
+    event.currentTarget.classList.add('active');
+}
+
+function logout() { location.reload(); }
