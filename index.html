@@ -59,11 +59,11 @@
         <aside class="sidebar">
             <div class="side-logo">NX<span>E</span></div>
             <nav class="side-nav">
-                <button onclick="showSection('dashboard')" class="nav-item active"><i class="fas fa-chart-line"></i></button>
-                <button onclick="showSection('metas')" class="nav-item"><i class="fas fa-bullseye"></i></button>
-                <button onclick="showSection('treinos')" class="nav-item"><i class="fas fa-dumbbell"></i></button>
-                <button onclick="showSection('dietas')" class="nav-item"><i class="fas fa-utensils"></i></button>
-                <button onclick="showSection('maquinas')" class="nav-item"><i class="fas fa-book-open"></i></button>
+                <button onclick="showSection('dashboard')" class="nav-item active" title="Dashboard"><i class="fas fa-chart-line"></i></button>
+                <button onclick="showSection('metas')" class="nav-item" title="Metas"><i class="fas fa-bullseye"></i></button>
+                <button onclick="showSection('treinos')" class="nav-item" title="Treinos"><i class="fas fa-dumbbell"></i></button>
+                <button onclick="showSection('dietas')" class="nav-item" title="Dieta"><i class="fas fa-utensils"></i></button>
+                <button onclick="showSection('maquinas')" class="nav-item" title="Biblioteca"><i class="fas fa-book-open"></i></button>
             </nav>
             <button onclick="logout()" class="logout-btn"><i class="fas fa-sign-out-alt"></i></button>
         </aside>
@@ -71,7 +71,7 @@
         <main class="main-content">
             <div class="container-viewport">
                 
-                <!-- DASHBOARD -->
+                <!-- SEÇÕES (Dashboard, Metas, Treinos, Dietas permanecem iguais...) -->
                 <section id="dashboard" class="page-section slide-up">
                     <div class="welcome-header">
                         <h1>Olá, <span id="display-name" class="text-gradient">Atleta</span></h1>
@@ -80,7 +80,6 @@
                             <div class="xp-bar"><div id="xp-fill" class="xp-fill"></div></div>
                         </div>
                     </div>
-
                     <div class="dashboard-grid">
                         <div class="card glass">
                             <h3><i class="fas fa-calculator text-primary"></i> Bio-Calculadora</h3>
@@ -94,7 +93,6 @@
                                 <p id="imc-status-text">Analizando...</p>
                             </div>
                         </div>
-
                         <div class="card glass">
                             <h3><i class="fas fa-tint text-primary"></i> Hidratação</h3>
                             <div class="water-box">
@@ -108,32 +106,41 @@
                     </div>
                 </section>
 
-                <!-- METAS -->
                 <section id="metas" class="page-section hidden">
                     <h2 class="section-title">Metas de Consistência</h2>
                     <div id="metas-list" class="stack-list"></div>
                 </section>
 
-                <!-- TREINOS -->
                 <section id="treinos" class="page-section hidden">
                     <h2 class="section-title">Cronograma Semanal Detalhado</h2>
                     <div id="workout-grid" class="workout-grid"></div>
                 </section>
 
-                <!-- NUTRIÇÃO -->
                 <section id="dietas" class="page-section hidden">
                     <h2 class="section-title">Protocolo Nutricional</h2>
                     <div id="diet-list" class="stack-list"></div>
                 </section>
 
-                <!-- BIBLIOTECA -->
+                <!-- BIBLIOTECA ATUALIZADA -->
                 <section id="maquinas" class="page-section hidden">
-                    <h2 class="section-title">Enciclopédia de Equipamentos</h2>
+                    <h2 class="section-title">Enciclopédia Smart Fit</h2>
+                    <p style="color: #666; margin-bottom: 20px;">Clique no aparelho para ver a demonstração e instruções.</p>
                     <div id="machine-list" class="machine-grid"></div>
                 </section>
 
             </div>
         </main>
+    </div>
+
+    <!-- MODAL DE DEMONSTRAÇÃO -->
+    <div id="machine-modal" class="modal hidden">
+        <div class="modal-overlay" onclick="closeModal()"></div>
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal()">&times;</button>
+            <div id="modal-body">
+                <!-- Preenchido via JS -->
+            </div>
+        </div>
     </div>
 
     <script src="script.js"></script>
