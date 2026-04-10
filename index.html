@@ -10,19 +10,18 @@
 </head>
 <body>
 
-    <!-- TELA DE ACESSO (RE-DESIGN TOTAL) -->
+    <!-- TELA DE ACESSO -->
     <div id="auth-screen" class="auth-wrapper">
-        <div class="auth-overlay"></div>
         <div class="auth-card fade-in">
             <div class="auth-header">
                 <h1 class="logo-main">NEXUS<span>ELITE</span></h1>
-                <p>TECNOLOGIA PARA RESULTADOS EXTREMOS</p>
+                <p class="auth-subtitle">TECNOLOGIA PARA RESULTADOS EXTREMOS</p>
             </div>
             
             <div class="auth-form">
                 <div class="input-field">
                     <label>IDENTIFICAÇÃO DO ATLETA</label>
-                    <input type="text" id="user-name" placeholder="Digite seu nome completo">
+                    <input type="text" id="user-name" placeholder="Digite seu nome">
                 </div>
 
                 <div class="form-row">
@@ -45,7 +44,7 @@
                 <div class="input-field">
                     <label>AMBIENTE DE TREINO</label>
                     <select id="user-location">
-                        <option value="academia">Academia Completa</option>
+                        <option value="academia">Academia Completa (Smart Fit)</option>
                         <option value="casa">Em Casa (Bodyweight)</option>
                     </select>
                 </div>
@@ -57,24 +56,22 @@
 
     <!-- SISTEMA PRINCIPAL -->
     <div id="app-container" class="hidden">
-        <!-- BARRA LATERAL FIXA -->
         <aside class="sidebar">
             <div class="side-logo">NX<span>E</span></div>
             <nav class="side-nav">
-                <button onclick="showSection('dashboard')" class="nav-item active" title="Painel"><i class="fas fa-chart-line"></i></button>
-                <button onclick="showSection('metas')" class="nav-item" title="Metas"><i class="fas fa-bullseye"></i></button>
-                <button onclick="showSection('treinos')" class="nav-item" title="Treinos"><i class="fas fa-dumbbell"></i></button>
-                <button onclick="showSection('dietas')" class="nav-item" title="Nutrição"><i class="fas fa-utensils"></i></button>
-                <button onclick="showSection('maquinas')" class="nav-item" title="Biblioteca"><i class="fas fa-book-open"></i></button>
+                <button onclick="showSection('dashboard')" class="nav-item active"><i class="fas fa-chart-line"></i></button>
+                <button onclick="showSection('metas')" class="nav-item"><i class="fas fa-bullseye"></i></button>
+                <button onclick="showSection('treinos')" class="nav-item"><i class="fas fa-dumbbell"></i></button>
+                <button onclick="showSection('dietas')" class="nav-item"><i class="fas fa-utensils"></i></button>
+                <button onclick="showSection('maquinas')" class="nav-item"><i class="fas fa-book-open"></i></button>
             </nav>
             <button onclick="logout()" class="logout-btn"><i class="fas fa-sign-out-alt"></i></button>
         </aside>
 
-        <!-- ÁREA DE CONTEÚDO -->
         <main class="main-content">
             <div class="container-viewport">
                 
-                <!-- SEÇÃO: DASHBOARD -->
+                <!-- DASHBOARD -->
                 <section id="dashboard" class="page-section slide-up">
                     <div class="welcome-header">
                         <h1>Olá, <span id="display-name" class="text-gradient">Atleta</span></h1>
@@ -85,54 +82,51 @@
                     </div>
 
                     <div class="dashboard-grid">
-                        <!-- IMC -->
                         <div class="card glass">
-                            <h3><i class="fas fa-calculator text-primary"></i> Bio-Calculadora (IMC)</h3>
+                            <h3><i class="fas fa-calculator text-primary"></i> Bio-Calculadora</h3>
                             <div class="imc-inputs">
-                                <input type="number" id="imc-age" placeholder="Idade">
                                 <input type="number" id="imc-h" placeholder="Altura (cm)">
                                 <input type="number" id="imc-w" placeholder="Peso (kg)">
                             </div>
-                            <button onclick="calculateIMC()" class="btn-action">Calcular Evolução</button>
-                            <div id="imc-res" class="hidden result-box">
-                                <h2 id="imc-val-text">--</h2>
+                            <button onclick="calculateIMC()" class="btn-action">Calcular</button>
+                            <div id="imc-res" class="hidden res-container">
+                                <h2 id="imc-val-text" class="text-gradient">--</h2>
                                 <p id="imc-status-text">Analizando...</p>
                             </div>
                         </div>
 
-                        <!-- HIDRATAÇÃO -->
                         <div class="card glass">
-                            <h3><i class="fas fa-tint text-primary"></i> Hidratação Diária</h3>
+                            <h3><i class="fas fa-tint text-primary"></i> Hidratação</h3>
                             <div class="water-box">
                                 <h1 id="water-text">0 / 3.5L</h1>
                                 <div class="water-btns">
-                                    <button onclick="addWater(250)" class="btn-mini">+250ml</button>
-                                    <button onclick="addWater(500)" class="btn-mini">+500ml</button>
+                                    <button onclick="addWater(250)" class="btn-action">+250ml</button>
+                                    <button onclick="addWater(500)" class="btn-action">+500ml</button>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </section>
 
-                <!-- SEÇÃO: METAS -->
+                <!-- METAS -->
                 <section id="metas" class="page-section hidden">
                     <h2 class="section-title">Metas de Consistência</h2>
                     <div id="metas-list" class="stack-list"></div>
                 </section>
 
-                <!-- SEÇÃO: TREINOS -->
+                <!-- TREINOS -->
                 <section id="treinos" class="page-section hidden">
-                    <h2 class="section-title">Cronograma Semanal (6-1)</h2>
+                    <h2 class="section-title">Cronograma Semanal Detalhado</h2>
                     <div id="workout-grid" class="workout-grid"></div>
                 </section>
 
-                <!-- SEÇÃO: NUTRIÇÃO -->
+                <!-- NUTRIÇÃO -->
                 <section id="dietas" class="page-section hidden">
                     <h2 class="section-title">Protocolo Nutricional</h2>
                     <div id="diet-list" class="stack-list"></div>
                 </section>
 
-                <!-- SEÇÃO: BIBLIOTECA -->
+                <!-- BIBLIOTECA -->
                 <section id="maquinas" class="page-section hidden">
                     <h2 class="section-title">Enciclopédia de Equipamentos</h2>
                     <div id="machine-list" class="machine-grid"></div>
@@ -144,4 +138,4 @@
 
     <script src="script.js"></script>
 </body>
-</html> 
+</html>
