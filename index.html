@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus Elite | Official System</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- TELA INICIAL ORGANIZADA -->
+    <div id="auth-screen" class="auth-wrapper">
+        <div class="auth-container">
+            <div class="auth-header">
+                <div class="logo">NEXUS<span>ELITE</span></div>
+                <p>Sua jornada de alta performance começa aqui</p>
+            </div>
+
+            <div class="auth-body">
+                <div class="input-section">
+                    <label><i class="fas fa-user"></i> Identificação</label>
+                    <input type="text" id="user-name" placeholder="Digite seu nome completo">
+                </div>
+
+                <div class="selection-grid">
+                    <div class="select-box">
+                        <label><i class="fas fa-bullseye"></i> Objetivo</label>
+                        <select id="user-goal">
+                            <option value="massa">Ganhar Massa</option>
+                            <option value="emagrecer">Emagrecer</option>
+                        </select>
+                    </div>
+                    <div class="select-box">
+                        <label><i class="fas fa-wallet"></i> Orçamento</label>
+                        <select id="user-budget">
+                            <option value="low">Econômico</option>
+                            <option value="high">Premium</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button onclick="startApp()" class="btn-start">
+                    INICIAR TREINAMENTO <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- DASHBOARD PRINCIPAL -->
+    <div id="app-container" class="hidden">
+        <aside class="sidebar">
+            <div class="sidebar-top">
+                <div class="logo">NX<span>E</span></div>
+                <nav>
+                    <button onclick="showSection('dashboard')" class="nav-item active"><i class="fas fa-home"></i> <span>Dashboard</span></button>
+                    <button onclick="showSection('dietas')" class="nav-item"><i class="fas fa-apple-whole"></i> <span>Nutrição</span></button>
+                    <button onclick="showSection('maquinas')" class="nav-item"><i class="fas fa-dumbbell"></i> <span>Máquinas</span></button>
+                </nav>
+            </div>
+            <button onclick="logout()" class="logout-link"><i class="fas fa-sign-out-alt"></i> Sair</button>
+        </aside>
+
+        <main class="main-viewport">
+            <!-- DASHBOARD / EVOLUÇÃO -->
+            <section id="dashboard" class="page-content">
+                <div class="welcome-bar">
+                    <h1>Olá, <span id="display-name" class="text-gradient">Atleta</span></h1>
+                </div>
+
+                <div class="stats-row">
+                    <div class="glass-card evolution-box">
+                        <h3>Nova Medição</h3>
+                        <div class="form-row">
+                            <input type="number" id="weight" placeholder="Peso (kg)">
+                            <input type="number" id="height" placeholder="Altura (cm)">
+                        </div>
+                        <button onclick="saveStats()" class="btn-primary">Salvar Evolução</button>
+                    </div>
+
+                    <div class="glass-card imc-box">
+                        <h3>Métrica Atual</h3>
+                        <div class="imc-display">
+                            <div class="imc-circle" id="imc-circle">
+                                <span id="imc-val">--</span>
+                            </div>
+                            <p id="imc-status">Aguardando dados</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card history-container">
+                    <h3>Histórico de Evolução</h3>
+                    <div class="table-wrapper">
+                        <table id="history-table">
+                            <thead>
+                                <tr><th>Data</th><th>Peso</th><th>Altura</th><th>IMC</th></tr>
+                            </thead>
+                            <tbody id="history-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- NUTRIÇÃO -->
+            <section id="dietas" class="page-content hidden">
+                <div class="header-flex">
+                    <h2>Plano Nutricional Especializado</h2>
+                    <span id="budget-info" class="budget-tag">---</span>
+                </div>
+                <div id="diet-list" class="diet-grid"></div>
+            </section>
+
+            <!-- GUIA DE MÁQUINAS -->
+            <section id="maquinas" class="page-content hidden">
+                <h2>Guia de Máquinas (6 por Grupo)</h2>
+                <div class="muscle-selector">
+                    <button onclick="loadMachines('peito')">Peito</button>
+                    <button onclick="loadMachines('costas')">Costas</button>
+                    <button onclick="loadMachines('perna')">Perna</button>
+                    <button onclick="loadMachines('braço')">Bíceps</button>
+                    <button onclick="loadMachines('triceps')">Tríceps</button>
+                    <button onclick="loadMachines('abdomen')">Abdômen</button>
+                </div>
+                <div id="machine-grid" class="machine-cards-grid"></div>
+            </section>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
