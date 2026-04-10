@@ -1,84 +1,137 @@
 const nexusDB = {
-    maquinas: {
-        peito: ["Supino Vertical", "Pec Deck", "Crossover", "Press Inclinado", "Fly Máquina", "Dips Articulado"],
-        costas: ["Puxada Alta", "Remada Baixa", "Remada Unilateral", "Pulldown Corda", "Cavalinho Máquina", "Gravitron"],
-        perna: ["Leg Press 45", "Extensora", "Flexora", "Adutora", "Abdutora", "Panturrilha Máquina"],
-        braço: ["Rosca Scott", "Rosca Polia", "Bíceps Unilateral", "Rosca Martelo Polia", "Bíceps Máquina", "Rosca Inversa"],
-        triceps: ["Tríceps Pulley", "Tríceps Corda", "Tríceps Máquina", "Francês Polia", "Tríceps Testa Polia", "Coice Cabo"],
-        abdomen: ["Crunch Máquina", "Abdominal Polia", "Elevação de Pernas", "Rotação de Tronco", "Prancha Banco", "Infra Articulado"]
+    maquinas: [
+        { n: "Supino Vertical", f: "Peito", d: "Ajuste o banco, empurre as alças e controle o retorno. Foco no peitoral médio." },
+        { n: "Leg Press 45", f: "Pernas", d: "Apoie os pés na largura dos ombros. Não trave o joelho no topo." },
+        { n: "Puxada Alta", f: "Costas", d: "Puxe a barra em direção ao peito, fechando as escápulas." },
+        { n: "Smith Machine", f: "Multifuncional", d: "Ideal para agachamentos guiados e supinos com segurança." },
+        { n: "Cadeira Extensora", f: "Quadríceps", d: "Estenda as pernas totalmente e contraia a coxa no topo." }
+    ],
+    treinos: {
+        academia_massa: ["Peito e Tríceps", "Costas e Bíceps", "Pernas (Foco Quad)", "Ombros e Trapézio", "Braços", "Pernas (Foco Post)", "Descanso"],
+        academia_emagrecer: ["Full Body HIIT", "Cardio + Superiores", "Pernas (Circuito)", "Core e Corrida", "Full Body 2", "Cardio Intenso", "Descanso"],
+        casa_massa: ["Flexão e Tríceps Banco", "Agachamento e Afundo", "Prancha e Abdominais", "Flexão Diamante", "Saltos e Isometria", "Core e Pernas", "Descanso"]
     },
     dietas: {
-        low_massa: ["Ovos e Aveia", "Frango e Arroz", "Batata e Carne Moída", "Omelete e Banana"],
-        high_massa: ["Whey e Blueberries", "Filé Mignon e Aspargos", "Salmão e Quinoa", "Iogurte Grego e Nuts"],
-        low_emagrecer: ["Claras de Ovos", "Frango e Salada", "Frutas Vermelhas", "Sopa de Legumes"],
-        high_emagrecer: ["Abacate e Ovos", "Tilápia e Brócolis", "Suco Verde", "Camarão Grelhado"]
+        massa: [
+            { h: "08:00", d: "4 Ovos + 100g Aveia + Fruta" },
+            { h: "12:00", d: "200g Frango + 250g Arroz + Feijão" },
+            { h: "16:00", d: "Whey + 30g Amendoim" },
+            { h: "20:00", d: "200g Carne + 200g Macarrão" }
+        ],
+        emagrecer: [
+            { h: "08:00", d: "2 Claras + Café Puro + 1 Maçã" },
+            { h: "12:00", d: "150g Peixe + Muita Salada + 100g Arroz" },
+            { h: "16:00", d: "Iogurte Natural + Castanhas" },
+            { h: "19:00", d: "Sopa de Legumes com Frango" }
+        ]
     }
 };
 
-let user = { history: [] };
+let user = { 
+    xp: 0, lvl: 1, water: 0,
+    metas: [
+        { t: "Beber 3.5L de Água", ok: false },
+        { t: "Completar Treino do Dia", ok: false },
+        { t: "Dormir 8 Horas", ok: false }
+    ]
+};
 
 function startApp() {
     const name = document.getElementById('user-name').value;
-    const goal = document.getElementById('user-goal').value;
-    const budget = document.getElementById('user-budget').value;
+    if(!name) return alert("Por favor, digite seu nome!");
 
-    if(!name) return alert("Por favor, digite seu nome para continuar.");
-
-    user = { name, goal, budget, history: [] };
-    
     document.getElementById('auth-screen').classList.add('hidden');
     document.getElementById('app-container').classList.remove('hidden');
     document.getElementById('display-name').innerText = name;
-    document.getElementById('budget-info').innerText = budget === 'high' ? 'PLANO PREMIUM' : 'PLANO ECONÔMICO';
 
-    loadMachines('peito');
-    loadDiet();
+    renderMetas();
+    renderWorkouts();
+    renderDiet();
+    renderMachines();
+    updateProgress();
 }
 
-function showSection(id) {
-    document.querySelectorAll('.page-content').forEach(s => s.classList.add('hidden'));
-    document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
-    document.getElementById(id).classList.remove('hidden');
-    event.currentTarget.classList.add('active');
+function updateProgress() {
+    document.getElementById('xp-fill').style.width = (user.xp / 500 * 100) + "%";
+    document.getElementById('xp-val').innerText = user.xp;
+    document.getElementById('lvl-num').innerText = user.lvl;
 }
 
-function saveStats() {
-    const w = parseFloat(document.getElementById('weight').value);
-    const h = parseFloat(document.getElementById('height').value);
-
-    if(w > 0 && h > 0) {
-        const imc = (w / ((h/100) * (h/100))).toFixed(1);
-        const data = new Date().toLocaleDateString();
-        user.history.unshift({ data, w, h, imc });
-        
-        document.getElementById('imc-val').innerText = imc;
-        renderHistory();
+function calculateIMC() {
+    const h = document.getElementById('imc-h').value / 100;
+    const w = document.getElementById('imc-w').value;
+    if(h > 0 && w > 0) {
+        const imc = (w / (h * h)).toFixed(1);
+        const res = document.getElementById('imc-res');
+        res.classList.remove('hidden');
+        document.getElementById('imc-val-text').innerText = imc;
+        document.getElementById('imc-status-text').innerText = imc < 25 ? "Peso Saudável" : "Sobrepeso";
+        addXP(50);
     }
 }
 
-function renderHistory() {
-    const body = document.getElementById('history-body');
-    body.innerHTML = user.history.map(h => `<tr><td>${h.data}</td><td>${h.w}kg</td><td>${h.h}cm</td><td>${h.imc}</td></tr>`).join('');
+function addWater(ml) {
+    user.water += ml;
+    document.getElementById('water-text').innerText = `${(user.water/1000).toFixed(1)} / 3.5L`;
+    if(user.water >= 3500) addXP(20);
 }
 
-function loadMachines(muscle) {
-    const grid = document.getElementById('machine-grid');
-    grid.innerHTML = nexusDB.maquinas[muscle].map(m => `
-        <div class="glass-card">
-            <h4>${m}</h4>
-            <p style="color: #888; font-size: 0.8rem;">Foco: ${muscle.toUpperCase()}</p>
+function addXP(val) {
+    user.xp += val;
+    if(user.xp >= 500) { user.lvl++; user.xp = 0; alert("Level Up!"); }
+    updateProgress();
+}
+
+function renderMetas() {
+    const list = document.getElementById('metas-list');
+    list.innerHTML = user.metas.map((m, i) => `
+        <div class="card-item" style="display:flex; justify-content:space-between; align-items:center;">
+            <span>${m.t}</span>
+            <button onclick="addXP(100)" class="btn-action" style="width:auto; padding:5px 15px;">CONCLUIR</button>
         </div>
     `).join('');
 }
 
-function loadDiet() {
-    const key = `${user.budget}_${user.goal}`;
-    document.getElementById('diet-list').innerHTML = nexusDB.dietas[key].map(d => `
-        <div class="glass-card">
-            <h4 style="color: var(--primary)">Refeição Sugerida</h4>
-            <p>${d}</p>
+function renderWorkouts() {
+    const loc = document.getElementById('user-location').value;
+    const goal = document.getElementById('user-goal').value;
+    const treinos = nexusDB.treinos[`${loc}_${goal}`] || nexusDB.treinos.academia_massa;
+    const dias = ["SEG", "TER", "QUA", "QUI", "SEX", "SAB", "DOM"];
+    
+    document.getElementById('workout-grid').innerHTML = treinos.map((t, i) => `
+        <div class="card glass" style="text-align:center">
+            <small style="color:var(--primary)">${dias[i]}</small>
+            <h4 style="margin-top:10px">${t}</h4>
         </div>
     `).join('');
+}
+
+function renderDiet() {
+    const goal = document.getElementById('user-goal').value;
+    const plano = nexusDB.dietas[goal];
+    document.getElementById('diet-list').innerHTML = plano.map(d => `
+        <div class="card-item" style="display:flex; gap:20px">
+            <b style="color:var(--primary)">${d.h}</b>
+            <span>${d.d}</span>
+        </div>
+    `).join('');
+}
+
+function renderMachines() {
+    document.getElementById('machine-list').innerHTML = nexusDB.maquinas.map(m => `
+        <div class="card glass">
+            <h4 style="color:var(--primary)">${m.n}</h4>
+            <small>Foco: ${m.f}</small>
+            <p style="font-size:0.8rem; margin-top:10px; color:#888">${m.d}</p>
+        </div>
+    `).join('');
+}
+
+function showSection(id) {
+    document.querySelectorAll('.page-section').forEach(s => s.classList.add('hidden'));
+    document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.remove('hidden');
+    event.currentTarget.classList.add('active');
 }
 
 function logout() { location.reload(); }
